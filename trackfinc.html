@@ -1,0 +1,1834 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FinTrack - Keuangan Pribadi</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --green: #10b981;
+            --red: #ef4444;
+            --orange: #f59e0b;
+            --blue: #3b82f6;
+            --purple: #8b5cf6;
+
+            --background: #f5f7fb;
+            --white: #ffffff;
+            --text: #111827;
+            --gray: #6b7280;
+            --border: #e5e7eb;
+
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--background);
+            color: var(--text);
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 240px;
+            height: 100vh;
+            background: #111827;
+            color: white;
+            padding: 25px 18px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(
+                135deg,
+                #818cf8,
+                #4f46e5
+            );
+            font-size: 21px;
+        }
+
+        .logo h2 {
+            font-size: 20px;
+        }
+
+        .logo span {
+            color: #818cf8;
+        }
+
+        .menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .menu button {
+            border: none;
+            background: transparent;
+            color: #9ca3af;
+            text-align: left;
+            padding: 13px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .menu button:hover,
+        .menu button.active {
+            background: #1f2937;
+            color: white;
+        }
+
+        .sidebar-footer {
+            position: absolute;
+            bottom: 25px;
+            left: 20px;
+            right: 20px;
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        /* MAIN */
+
+        .main {
+            margin-left: 240px;
+            padding: 30px;
+            max-width: 1500px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 7px;
+        }
+
+        .header p {
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        .month {
+            padding: 11px 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+        }
+
+        /* SUMMARY */
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 18px;
+            padding: 22px;
+            box-shadow: var(--shadow);
+        }
+
+        .summary-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .summary-title {
+            color: var(--gray);
+            font-size: 13px;
+        }
+
+        .summary-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+        }
+
+        .purple {
+            background: #f5f3ff;
+            color: var(--purple);
+        }
+
+        .green {
+            background: #ecfdf5;
+            color: var(--green);
+        }
+
+        .red {
+            background: #fef2f2;
+            color: var(--red);
+        }
+
+        .blue {
+            background: #eff6ff;
+            color: var(--blue);
+        }
+
+        .summary-value {
+            font-size: 23px;
+            font-weight: bold;
+        }
+
+        /* CONTENT */
+
+        .content {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 22px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 18px;
+            padding: 22px;
+            box-shadow: var(--shadow);
+            margin-bottom: 22px;
+        }
+
+        .card-title {
+            margin-bottom: 20px;
+        }
+
+        .card-title h2 {
+            font-size: 17px;
+            margin-bottom: 5px;
+        }
+
+        .card-title p {
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        /* FORM */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: bold;
+            color: #374151;
+        }
+
+        input,
+        select {
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            outline: none;
+            font-size: 14px;
+            background: white;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, .1);
+        }
+
+        .type-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .type-button {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .type-button.income.active {
+            background: #ecfdf5;
+            color: var(--green);
+            border-color: #86efac;
+        }
+
+        .type-button.expense.active {
+            background: #fef2f2;
+            color: var(--red);
+            border-color: #fca5a5;
+        }
+
+        .submit {
+            border: none;
+            background: var(--primary);
+            color: white;
+            padding: 13px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .submit:hover {
+            background: var(--primary-dark);
+        }
+
+        .reset {
+            border: none;
+            background: #f3f4f6;
+            padding: 13px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* CATEGORY */
+
+        .category {
+            margin-bottom: 22px;
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .category-name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .bar {
+            height: 9px;
+            background: #f3f4f6;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: .4s;
+        }
+
+        .bar-needs {
+            background: var(--blue);
+        }
+
+        .bar-saving {
+            background: var(--green);
+        }
+
+        .bar-wants {
+            background: var(--orange);
+        }
+
+        /* TRANSACTIONS */
+
+        .transactions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 480px;
+            overflow-y: auto;
+        }
+
+        .transaction {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid #f0f1f3;
+            padding: 13px;
+            border-radius: 12px;
+        }
+
+        .transaction-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 11px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .transaction-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .transaction-info strong {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .transaction-info small {
+            color: var(--gray);
+            font-size: 11px;
+        }
+
+        .transaction-money {
+            font-size: 13px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .delete {
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            color: #9ca3af;
+            font-size: 16px;
+        }
+
+        .delete:hover {
+            color: var(--red);
+        }
+
+        .empty {
+            text-align: center;
+            color: var(--gray);
+            padding: 35px;
+            font-size: 14px;
+        }
+
+        /* DATA BUTTON */
+
+        .data-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .data-button {
+            padding: 11px 14px;
+            border: none;
+            border-radius: 10px;
+            background: #f3f4f6;
+            cursor: pointer;
+        }
+
+        .data-button.danger {
+            background: #fef2f2;
+            color: var(--red);
+        }
+
+        /* TOAST */
+
+        .toast {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: #111827;
+            color: white;
+            padding: 14px 18px;
+            border-radius: 12px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: .3s;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* MOBILE */
+
+        @media(max-width: 1000px) {
+
+            .summary {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width: 700px) {
+
+            .sidebar {
+                position: static;
+                width: 100%;
+                height: auto;
+                padding: 18px;
+            }
+
+            .sidebar-footer {
+                display: none;
+            }
+
+            .menu {
+                display: none;
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 18px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .summary {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .summary-card {
+                padding: 16px;
+            }
+
+            .summary-value {
+                font-size: 17px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .full {
+                grid-column: auto;
+            }
+
+            .transaction-money {
+                font-size: 11px;
+            }
+        }
+
+        @media(max-width: 420px) {
+
+            .summary {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="logo-icon">💰</div>
+
+            <h2>
+                Fin<span>Track</span>
+            </h2>
+        </div>
+
+        <div class="menu">
+
+            <button class="active" onclick="keDashboard()">
+                📊 Dashboard
+            </button>
+
+            <button onclick="keForm()">
+                ➕ Tambah Transaksi
+            </button>
+
+            <button onclick="keRiwayat()">
+                🧾 Riwayat
+            </button>
+
+        </div>
+
+        <div class="sidebar-footer">
+            Data tersimpan otomatis di perangkat
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+        <header class="header">
+
+            <div>
+                <h1>Keuangan Saya</h1>
+
+                <p>
+                    Catat, pantau, dan kelola keuanganmu.
+                </p>
+            </div>
+
+            <input
+                type="month"
+                id="monthFilter"
+                class="month"
+            >
+
+        </header>
+
+
+        <!-- SUMMARY -->
+
+        <section class="summary">
+
+            <div class="summary-card">
+
+                <div class="summary-top">
+                    <span class="summary-title">
+                        Saldo
+                    </span>
+
+                    <div class="summary-icon purple">
+                        💳
+                    </div>
+                </div>
+
+                <div id="saldo" class="summary-value">
+                    Rp 0
+                </div>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <div class="summary-top">
+                    <span class="summary-title">
+                        Uang Masuk
+                    </span>
+
+                    <div class="summary-icon green">
+                        ↑
+                    </div>
+                </div>
+
+                <div id="pemasukan" class="summary-value">
+                    Rp 0
+                </div>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <div class="summary-top">
+                    <span class="summary-title">
+                        Uang Keluar
+                    </span>
+
+                    <div class="summary-icon red">
+                        ↓
+                    </div>
+                </div>
+
+                <div id="pengeluaran" class="summary-value">
+                    Rp 0
+                </div>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <div class="summary-top">
+                    <span class="summary-title">
+                        Transaksi
+                    </span>
+
+                    <div class="summary-icon blue">
+                        📝
+                    </div>
+                </div>
+
+                <div id="jumlahTransaksi" class="summary-value">
+                    0
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <div class="content">
+
+            <!-- LEFT -->
+
+            <div>
+
+                <!-- FORM -->
+
+                <section class="card" id="form">
+
+                    <div class="card-title">
+
+                        <h2>Tambah Transaksi</h2>
+
+                        <p>
+                            Catat pemasukan atau pengeluaran.
+                        </p>
+
+                    </div>
+
+
+                    <form id="formTransaksi">
+
+                        <div class="form-grid">
+
+                            <div class="form-group full">
+
+                                <label>
+                                    Jenis Transaksi
+                                </label>
+
+                                <div class="type-buttons">
+
+                                    <button
+                                        type="button"
+                                        id="btnMasuk"
+                                        class="type-button income active"
+                                        onclick="pilihJenis('masuk')"
+                                    >
+                                        ↑ Uang Masuk
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        id="btnKeluar"
+                                        class="type-button expense"
+                                        onclick="pilihJenis('keluar')"
+                                    >
+                                        ↓ Uang Keluar
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label>
+                                    Jumlah
+                                </label>
+
+                                <input
+                                    type="number"
+                                    id="jumlah"
+                                    placeholder="Contoh: 50000"
+                                    min="1"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label>
+                                    Tanggal
+                                </label>
+
+                                <input
+                                    type="date"
+                                    id="tanggal"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div
+                                class="form-group"
+                                id="kategoriBox"
+                                style="display:none"
+                            >
+
+                                <label>
+                                    Kategori
+                                </label>
+
+                                <select id="kategori">
+
+                                    <option value="Kebutuhan Pokok">
+                                        🏠 Kebutuhan Pokok
+                                    </option>
+
+                                    <option value="Tabungan/Investasi">
+                                        💰 Tabungan / Investasi
+                                    </option>
+
+                                    <option value="Keinginan">
+                                        🎮 Keinginan
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label>
+                                    Catatan
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="catatan"
+                                    placeholder="Contoh: Makan siang"
+                                >
+
+                            </div>
+
+
+                            <div class="form-group full">
+
+                                <div class="buttons">
+
+                                    <button
+                                        type="submit"
+                                        class="submit"
+                                    >
+                                        + Simpan
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        class="reset"
+                                        onclick="resetForm()"
+                                    >
+                                        Reset
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </form>
+
+                </section>
+
+
+                <!-- RIWAYAT -->
+
+                <section class="card" id="riwayat">
+
+                    <div class="card-title">
+
+                        <h2>Riwayat Transaksi</h2>
+
+                        <p>
+                            Transaksi pada bulan yang dipilih.
+                        </p>
+
+                    </div>
+
+                    <div
+                        class="transactions"
+                        id="daftarTransaksi"
+                    >
+                    </div>
+
+                </section>
+
+            </div>
+
+
+            <!-- RIGHT -->
+
+            <div>
+
+                <!-- KATEGORI -->
+
+                <section class="card">
+
+                    <div class="card-title">
+
+                        <h2>Pengeluaran</h2>
+
+                        <p>
+                            Berdasarkan kategori.
+                        </p>
+
+                    </div>
+
+
+                    <div class="category">
+
+                        <div class="category-header">
+
+                            <div class="category-name">
+
+                                <span
+                                    class="dot"
+                                    style="background:#3b82f6"
+                                ></span>
+
+                                Kebutuhan Pokok
+
+                            </div>
+
+                            <strong id="kebutuhan">
+                                Rp 0
+                            </strong>
+
+                        </div>
+
+                        <div class="bar">
+
+                            <div
+                                id="barKebutuhan"
+                                class="bar-fill bar-needs"
+                                style="width:0%"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="category">
+
+                        <div class="category-header">
+
+                            <div class="category-name">
+
+                                <span
+                                    class="dot"
+                                    style="background:#10b981"
+                                ></span>
+
+                                Tabungan / Investasi
+
+                            </div>
+
+                            <strong id="tabungan">
+                                Rp 0
+                            </strong>
+
+                        </div>
+
+                        <div class="bar">
+
+                            <div
+                                id="barTabungan"
+                                class="bar-fill bar-saving"
+                                style="width:0%"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="category">
+
+                        <div class="category-header">
+
+                            <div class="category-name">
+
+                                <span
+                                    class="dot"
+                                    style="background:#f59e0b"
+                                ></span>
+
+                                Keinginan
+
+                            </div>
+
+                            <strong id="keinginan">
+                                Rp 0
+                            </strong>
+
+                        </div>
+
+                        <div class="bar">
+
+                            <div
+                                id="barKeinginan"
+                                class="bar-fill bar-wants"
+                                style="width:0%"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- DATA -->
+
+                <section class="card">
+
+                    <div class="card-title">
+
+                        <h2>Data Saya</h2>
+
+                        <p>
+                            Backup dan pulihkan data.
+                        </p>
+
+                    </div>
+
+
+                    <div class="data-buttons">
+
+                        <button
+                            class="data-button"
+                            onclick="exportData()"
+                        >
+                            📥 Export
+                        </button>
+
+                        <button
+                            class="data-button"
+                            onclick="document.getElementById('fileInput').click()"
+                        >
+                            📤 Import
+                        </button>
+
+                        <button
+                            class="data-button danger"
+                            onclick="hapusSemua()"
+                        >
+                            🗑 Hapus Semua
+                        </button>
+
+                        <input
+                            type="file"
+                            id="fileInput"
+                            accept=".json"
+                            hidden
+                            onchange="importData(event)"
+                        >
+
+                    </div>
+
+                </section>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <div
+        id="toast"
+        class="toast"
+    >
+        Berhasil!
+    </div>
+
+
+    <script>
+
+        /* ==============================
+           DATA
+        ============================== */
+
+        let data =
+            JSON.parse(
+                localStorage.getItem("fintrackData")
+            ) || [];
+
+        let jenis = "masuk";
+
+
+        /* ==============================
+           ELEMENT
+        ============================== */
+
+        const form =
+            document.getElementById("formTransaksi");
+
+        const jumlah =
+            document.getElementById("jumlah");
+
+        const tanggal =
+            document.getElementById("tanggal");
+
+        const kategori =
+            document.getElementById("kategori");
+
+        const catatan =
+            document.getElementById("catatan");
+
+        const monthFilter =
+            document.getElementById("monthFilter");
+
+
+        /* ==============================
+           TANGGAL DEFAULT
+        ============================== */
+
+        const hariIni =
+            new Date();
+
+        tanggal.value =
+            hariIni.toISOString().split("T")[0];
+
+        monthFilter.value =
+            hariIni.toISOString().slice(0, 7);
+
+
+        /* ==============================
+           PILIH JENIS
+        ============================== */
+
+        function pilihJenis(value) {
+
+            jenis = value;
+
+            const masuk =
+                document.getElementById("btnMasuk");
+
+            const keluar =
+                document.getElementById("btnKeluar");
+
+            const kategoriBox =
+                document.getElementById("kategoriBox");
+
+            if (value === "masuk") {
+
+                masuk.classList.add("active");
+                keluar.classList.remove("active");
+
+                kategoriBox.style.display = "none";
+
+            } else {
+
+                keluar.classList.add("active");
+                masuk.classList.remove("active");
+
+                kategoriBox.style.display = "flex";
+            }
+        }
+
+
+        /* ==============================
+           SIMPAN TRANSAKSI
+        ============================== */
+
+        form.addEventListener(
+            "submit",
+            function(event) {
+
+                event.preventDefault();
+
+                const nilai =
+                    Number(jumlah.value);
+
+                if (!nilai || nilai <= 0) {
+
+                    tampilkanToast(
+                        "Masukkan jumlah yang benar."
+                    );
+
+                    return;
+                }
+
+
+                const transaksi = {
+
+                    id: Date.now(),
+
+                    jenis: jenis,
+
+                    jumlah: nilai,
+
+                    tanggal: tanggal.value,
+
+                    kategori:
+                        jenis === "keluar"
+                            ? kategori.value
+                            : "Pemasukan",
+
+                    catatan:
+                        catatan.value.trim()
+                        || (
+                            jenis === "masuk"
+                                ? "Pemasukan"
+                                : "Pengeluaran"
+                        )
+                };
+
+
+                data.push(transaksi);
+
+                simpanData();
+
+                resetForm();
+
+                tampilkan();
+
+                tampilkanToast(
+                    "Transaksi berhasil disimpan."
+                );
+
+            }
+        );
+
+
+        /* ==============================
+           LOCAL STORAGE
+        ============================== */
+
+        function simpanData() {
+
+            localStorage.setItem(
+                "fintrackData",
+                JSON.stringify(data)
+            );
+
+        }
+
+
+        /* ==============================
+           TAMPILKAN DATA
+        ============================== */
+
+        function tampilkan() {
+
+            const bulan =
+                monthFilter.value;
+
+            const transaksiBulan =
+                data.filter(item =>
+                    item.tanggal.startsWith(bulan)
+                );
+
+
+            let pemasukan = 0;
+            let pengeluaran = 0;
+
+            let kebutuhan = 0;
+            let tabungan = 0;
+            let keinginan = 0;
+
+
+            transaksiBulan.forEach(item => {
+
+                if (item.jenis === "masuk") {
+
+                    pemasukan += item.jumlah;
+
+                } else {
+
+                    pengeluaran += item.jumlah;
+
+                    if (
+                        item.kategori ===
+                        "Kebutuhan Pokok"
+                    ) {
+                        kebutuhan += item.jumlah;
+                    }
+
+                    if (
+                        item.kategori ===
+                        "Tabungan/Investasi"
+                    ) {
+                        tabungan += item.jumlah;
+                    }
+
+                    if (
+                        item.kategori ===
+                        "Keinginan"
+                    ) {
+                        keinginan += item.jumlah;
+                    }
+                }
+
+            });
+
+
+            const saldo =
+                pemasukan - pengeluaran;
+
+
+            document.getElementById("saldo")
+                .textContent =
+                rupiah(saldo);
+
+            document.getElementById("pemasukan")
+                .textContent =
+                rupiah(pemasukan);
+
+            document.getElementById("pengeluaran")
+                .textContent =
+                rupiah(pengeluaran);
+
+            document.getElementById("jumlahTransaksi")
+                .textContent =
+                transaksiBulan.length;
+
+
+            document.getElementById("kebutuhan")
+                .textContent =
+                rupiah(kebutuhan);
+
+            document.getElementById("tabungan")
+                .textContent =
+                rupiah(tabungan);
+
+            document.getElementById("keinginan")
+                .textContent =
+                rupiah(keinginan);
+
+
+            document.getElementById("barKebutuhan")
+                .style.width =
+                persen(kebutuhan, pengeluaran) + "%";
+
+            document.getElementById("barTabungan")
+                .style.width =
+                persen(tabungan, pengeluaran) + "%";
+
+            document.getElementById("barKeinginan")
+                .style.width =
+                persen(keinginan, pengeluaran) + "%";
+
+
+            tampilkanTransaksi(
+                transaksiBulan
+            );
+        }
+
+
+        /* ==============================
+           TRANSAKSI
+        ============================== */
+
+        function tampilkanTransaksi(list) {
+
+            const container =
+                document.getElementById(
+                    "daftarTransaksi"
+                );
+
+
+            if (list.length === 0) {
+
+                container.innerHTML = `
+                    <div class="empty">
+                        Belum ada transaksi.
+                        <br><br>
+                        Yuk catat transaksi pertamamu 😊
+                    </div>
+                `;
+
+                return;
+            }
+
+
+            list =
+                [...list].sort(
+                    (a, b) =>
+                        new Date(b.tanggal) -
+                        new Date(a.tanggal)
+                );
+
+
+            container.innerHTML =
+                list.map(item => {
+
+                    const masuk =
+                        item.jenis === "masuk";
+
+
+                    let icon = "💸";
+
+                    if (masuk) {
+                        icon = "💵";
+                    }
+
+                    if (
+                        item.kategori ===
+                        "Kebutuhan Pokok"
+                    ) {
+                        icon = "🏠";
+                    }
+
+                    if (
+                        item.kategori ===
+                        "Tabungan/Investasi"
+                    ) {
+                        icon = "💰";
+                    }
+
+                    if (
+                        item.kategori ===
+                        "Keinginan"
+                    ) {
+                        icon = "🎮";
+                    }
+
+
+                    return `
+
+                        <div class="transaction">
+
+                            <div
+                                class="transaction-icon"
+                                style="
+                                    background:
+                                    ${
+                                        masuk
+                                            ? "#ecfdf5"
+                                            : "#fef2f2"
+                                    };
+                                "
+                            >
+                                ${icon}
+                            </div>
+
+
+                            <div class="transaction-info">
+
+                                <strong>
+                                    ${aman(item.catatan)}
+                                </strong>
+
+                                <small>
+                                    ${formatTanggal(item.tanggal)}
+                                    ·
+                                    ${aman(item.kategori)}
+                                </small>
+
+                            </div>
+
+
+                            <div
+                                class="transaction-money"
+                                style="
+                                    color:
+                                    ${
+                                        masuk
+                                            ? "#10b981"
+                                            : "#ef4444"
+                                    };
+                                "
+                            >
+                                ${masuk ? "+" : "-"}
+                                ${rupiah(item.jumlah)}
+                            </div>
+
+
+                            <button
+                                class="delete"
+                                onclick="hapusTransaksi(${item.id})"
+                            >
+                                🗑
+                            </button>
+
+                        </div>
+
+                    `;
+
+                }).join("");
+        }
+
+
+        /* ==============================
+           HAPUS TRANSAKSI
+        ============================== */
+
+        function hapusTransaksi(id) {
+
+            if (
+                !confirm(
+                    "Hapus transaksi ini?"
+                )
+            ) {
+                return;
+            }
+
+
+            data =
+                data.filter(
+                    item => item.id !== id
+                );
+
+
+            simpanData();
+
+            tampilkan();
+
+            tampilkanToast(
+                "Transaksi dihapus."
+            );
+        }
+
+
+        /* ==============================
+           RESET
+        ============================== */
+
+        function resetForm() {
+
+            form.reset();
+
+            jenis = "masuk";
+
+            tanggal.value =
+                new Date()
+                    .toISOString()
+                    .split("T")[0];
+
+            pilihJenis("masuk");
+        }
+
+
+        /* ==============================
+           FORMAT RUPIAH
+        ============================== */
+
+        function rupiah(nilai) {
+
+            return new Intl.NumberFormat(
+                "id-ID",
+                {
+                    style: "currency",
+                    currency: "IDR",
+                    maximumFractionDigits: 0
+                }
+            ).format(nilai);
+
+        }
+
+
+        function formatTanggal(tanggal) {
+
+            const date =
+                new Date(
+                    tanggal + "T00:00:00"
+                );
+
+            return date.toLocaleDateString(
+                "id-ID",
+                {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric"
+                }
+            );
+        }
+
+
+        function persen(nilai, total) {
+
+            if (total === 0) {
+                return 0;
+            }
+
+            return Math.min(
+                100,
+                (nilai / total) * 100
+            );
+        }
+
+
+        function aman(text) {
+
+            return String(text)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+
+        /* ==============================
+           FILTER BULAN
+        ============================== */
+
+        monthFilter.addEventListener(
+            "change",
+            tampilkan
+        );
+
+
+        /* ==============================
+           EXPORT
+        ============================== */
+
+        function exportData() {
+
+            if (data.length === 0) {
+
+                tampilkanToast(
+                    "Belum ada data."
+                );
+
+                return;
+            }
+
+
+            const file =
+                new Blob(
+                    [
+                        JSON.stringify(
+                            data,
+                            null,
+                            2
+                        )
+                    ],
+                    {
+                        type:
+                            "application/json"
+                    }
+                );
+
+
+            const url =
+                URL.createObjectURL(file);
+
+
+            const link =
+                document.createElement("a");
+
+            link.href = url;
+
+            link.download =
+                "fintrack-backup.json";
+
+            link.click();
+
+            URL.revokeObjectURL(url);
+
+            tampilkanToast(
+                "Backup berhasil dibuat."
+            );
+        }
+
+
+        /* ==============================
+           IMPORT
+        ============================== */
+
+        function importData(event) {
+
+            const file =
+                event.target.files[0];
+
+            if (!file) return;
+
+
+            const reader =
+                new FileReader();
+
+
+            reader.onload =
+                function(e) {
+
+                    try {
+
+                        const hasil =
+                            JSON.parse(
+                                e.target.result
+                            );
+
+
+                        if (
+                            !Array.isArray(hasil)
+                        ) {
+                            throw new Error();
+                        }
+
+
+                        data = hasil;
+
+                        simpanData();
+
+                        tampilkan();
+
+                        tampilkanToast(
+                            "Data berhasil dipulihkan."
+                        );
+
+                    } catch {
+
+                        tampilkanToast(
+                            "File backup tidak valid."
+                        );
+
+                    }
+                };
+
+
+            reader.readAsText(file);
+        }
+
+
+        /* ==============================
+           HAPUS SEMUA
+        ============================== */
+
+        function hapusSemua() {
+
+            if (data.length === 0) {
+
+                tampilkanToast(
+                    "Belum ada data."
+                );
+
+                return;
+            }
+
+
+            if (
+                !confirm(
+                    "PERINGATAN!\n\n" +
+                    "Semua transaksi akan dihapus.\n" +
+                    "Pastikan sudah melakukan Export jika diperlukan.\n\n" +
+                    "Lanjutkan?"
+                )
+            ) {
+                return;
+            }
+
+
+            data = [];
+
+            simpanData();
+
+            tampilkan();
+
+            tampilkanToast(
+                "Semua data telah dihapus."
+            );
+        }
+
+
+        /* ==============================
+           NAVIGASI
+        ============================== */
+
+        function keDashboard() {
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        }
+
+
+        function keForm() {
+
+            document
+                .getElementById("form")
+                .scrollIntoView({
+                    behavior: "smooth"
+                });
+        }
+
+
+        function keRiwayat() {
+
+            document
+                .getElementById("riwayat")
+                .scrollIntoView({
+                    behavior: "smooth"
+                });
+        }
+
+
+        /* ==============================
+           TOAST
+        ============================== */
+
+        function tampilkanToast(pesan) {
+
+            const toast =
+                document.getElementById("toast");
+
+            toast.textContent = pesan;
+
+            toast.classList.add("show");
+
+
+            setTimeout(
+                () => {
+                    toast.classList.remove("show");
+                },
+                2500
+            );
+        }
+
+
+        /* ==============================
+           START
+        ============================== */
+
+        tampilkan();
+
+    </script>
+
+</body>
+</html>
